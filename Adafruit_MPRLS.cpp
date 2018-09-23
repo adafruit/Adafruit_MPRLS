@@ -46,8 +46,8 @@
     @param PSI_max The maximum PSI measurement range of the sensor, default 25
 */
 /**************************************************************************/
-Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin = -1, int8_t EOC_pin = -1, 
-			       uint8_t PSI_min = 0, uint8_t PSI_max = 25) {
+Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin, 
+			       uint8_t PSI_min, uint8_t PSI_max) {
 
     _reset = reset_pin;
     _eoc = EOC_pin;
@@ -96,7 +96,7 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
 /**************************************************************************/
 float Adafruit_MPRLS::readPressure(void) {
   uint32_t raw_psi = readData();
-  if (raw_psi == -1) {
+  if (raw_psi == 0xFFFFFFFF) {
     return NAN;
   }
 
@@ -140,10 +140,10 @@ uint32_t Adafruit_MPRLS::readData(void) {
   
   uint8_t status = _i2c->read();
   if (status & MPRLS_STATUS_MATHSAT) {
-    return -1;
+    return 0xFFFFFFFF;
   }
   if (status & MPRLS_STATUS_FAILED) {
-    return -1;
+    return 0xFFFFFFFF;
   }
 
   uint32_t ret;
