@@ -40,6 +40,10 @@
 /**************************************************************************/
 /*! 
     @brief constructor initializes default configuration value
+    @param reset_pin Optional hardware reset pin, default set to -1 to skip
+    @param EOC_pin Optional End-of-Convert indication pin, default set to -1 to skip
+    @param PSI_min The minimum PSI measurement range of the sensor, default 0
+    @param PSI_max The maximum PSI measurement range of the sensor, default 25
 */
 /**************************************************************************/
 Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin = -1, int8_t EOC_pin = -1, 
@@ -56,6 +60,7 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin = -1, int8_t EOC_pin = -1,
     @brief  setup and initialize communication with the hardware
     @param i2c_addr The I2C address for the sensor (default is 0x18)
     @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults to &Wire
+    @returns True on success, False if sensor not found
 */
 /**************************************************************************/
 boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {

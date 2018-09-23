@@ -25,10 +25,10 @@
 #include "Wire.h"
 
 #define MPRLS_DEFAULT_ADDR         (0x18) ///< Most common I2C address
-#define MPRLS_STATUS_POWERED       (0x40)
-#define MPRLS_STATUS_BUSY          (0x20)
-#define MPRLS_STATUS_FAILED        (0x04)
-#define MPRLS_STATUS_MATHSAT       (0x01)
+#define MPRLS_STATUS_POWERED       (0x40) ///< Status SPI powered bit
+#define MPRLS_STATUS_BUSY          (0x20) ///< Status busy bit
+#define MPRLS_STATUS_FAILED        (0x04) ///< Status bit for integrity fail
+#define MPRLS_STATUS_MATHSAT       (0x01) ///< Status bit for math saturation
 
 
 /**************************************************************************/
