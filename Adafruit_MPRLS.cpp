@@ -119,8 +119,8 @@ float Adafruit_MPRLS::readPressure(void) {
 uint32_t Adafruit_MPRLS::readData(void) {
   _i2c->beginTransmission(_i2c_addr);
   _i2c->write(0xAA);   // command to read pressure
-  _i2c->write(0x0);
-  _i2c->write(0x0);
+  _i2c->write((byte)0x0);
+  _i2c->write((byte)0x0);
   _i2c->endTransmission();
   
   // Use the gpio to tell end of conversion
