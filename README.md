@@ -1,4 +1,4 @@
-# Adafruit_MPRLS [![Build Status](https://travis-ci.org/adafruit/Adafruit_MPRLS.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit_MPRLS)
+# Adafruit MPRLS Library [![Build Status](https://github.com/adafruit/Adafruit_MPRLS/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_MPRLS/actions)
 
 <img src="https://cdn-shop.adafruit.com/970x728/3965-00.jpg" height="300"/>
 

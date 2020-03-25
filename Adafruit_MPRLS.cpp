@@ -29,37 +29,39 @@
  */
 
 #if (ARDUINO >= 100)
- #include "Arduino.h"
+#include "Arduino.h"
 #else
- #include "WProgram.h"
+#include "WProgram.h"
 #endif
 #include "Wire.h"
 
 #include "Adafruit_MPRLS.h"
 
 /**************************************************************************/
-/*! 
+/*!
     @brief constructor initializes default configuration value
     @param reset_pin Optional hardware reset pin, default set to -1 to skip
-    @param EOC_pin Optional End-of-Convert indication pin, default set to -1 to skip
+    @param EOC_pin Optional End-of-Convert indication pin, default set to -1 to
+   skip
     @param PSI_min The minimum PSI measurement range of the sensor, default 0
     @param PSI_max The maximum PSI measurement range of the sensor, default 25
 */
 /**************************************************************************/
-Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin, 
-			       uint8_t PSI_min, uint8_t PSI_max) {
+Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
+                               uint8_t PSI_min, uint8_t PSI_max) {
 
-    _reset = reset_pin;
-    _eoc = EOC_pin;
-    _PSI_min = PSI_min;
-    _PSI_max = PSI_max;
+  _reset = reset_pin;
+  _eoc = EOC_pin;
+  _PSI_min = PSI_min;
+  _PSI_max = PSI_max;
 }
 
 /**************************************************************************/
-/*! 
+/*!
     @brief  setup and initialize communication with the hardware
     @param i2c_addr The I2C address for the sensor (default is 0x18)
-    @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults to &Wire
+    @param twoWire Optional pointer to the desired TwoWire I2C object. Defaults
+   to &Wire
     @returns True on success, False if sensor not found
 */
 /**************************************************************************/
@@ -82,14 +84,14 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
 
   delay(10); // startup timing
 
-  //Serial.print("Status: ");
+  // Serial.print("Status: ");
   uint8_t stat = readStatus();
-  //Serial.println(stat);
+  // Serial.println(stat);
   return !(stat & 0b10011110);
 }
 
 /**************************************************************************/
-/*! 
+/*!
     @brief Read and calculate the pressure
     @returns The measured pressure, in hPa on success, NAN on failure
 */
@@ -103,26 +105,25 @@ float Adafruit_MPRLS::readPressure(void) {
   // All is good, calculate the PSI and convert to hPA
   // use the 10-90 calibration curve
   float psi = (raw_psi - 0x19999A) * (_PSI_max - _PSI_min);
-  psi /= (float) (0xE66666 - 0x19999A);
+  psi /= (float)(0xE66666 - 0x19999A);
   psi += _PSI_min;
-    // convert PSI to hPA
+  // convert PSI to hPA
   return psi * 68.947572932;
 }
 
-
 /**************************************************************************/
-/*! 
+/*!
     @brief Read 24 bits of measurement data from the device
     @returns -1 on failure (check status) or 24 bits of raw ADC reading
 */
 /**************************************************************************/
 uint32_t Adafruit_MPRLS::readData(void) {
   _i2c->beginTransmission(_i2c_addr);
-  _i2c->write(0xAA);   // command to read pressure
+  _i2c->write(0xAA); // command to read pressure
   _i2c->write((byte)0x0);
   _i2c->write((byte)0x0);
   _i2c->endTransmission();
-  
+
   // Use the gpio to tell end of conversion
   if (_eoc != -1) {
     while (!digitalRead(_eoc)) {
@@ -132,12 +133,12 @@ uint32_t Adafruit_MPRLS::readData(void) {
     // check the status byte
     uint8_t stat;
     while ((stat = readStatus()) & MPRLS_STATUS_BUSY) {
-      //Serial.print("Status: "); Serial.println(stat, HEX);
+      // Serial.print("Status: "); Serial.println(stat, HEX);
       delay(10);
     }
   }
   _i2c->requestFrom(_i2c_addr, (uint8_t)4);
-  
+
   uint8_t status = _i2c->read();
   if (status & MPRLS_STATUS_MATHSAT) {
     return 0xFFFFFFFF;
@@ -147,15 +148,17 @@ uint32_t Adafruit_MPRLS::readData(void) {
   }
 
   uint32_t ret;
-  ret = _i2c->read(); ret <<= 8;
-  ret |= _i2c->read(); ret <<= 8;
+  ret = _i2c->read();
+  ret <<= 8;
   ret |= _i2c->read();
-  
+  ret <<= 8;
+  ret |= _i2c->read();
+
   return ret;
 }
 
 /**************************************************************************/
-/*! 
+/*!
     @brief Read just the status byte, see datasheet for bit definitions
     @returns 8 bits of status data
 */
@@ -165,4 +168,3 @@ uint8_t Adafruit_MPRLS::readStatus(void) {
 
   return _i2c->read();
 }
-
