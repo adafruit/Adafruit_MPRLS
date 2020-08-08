@@ -127,14 +127,12 @@ uint32_t Adafruit_MPRLS::readData(void) {
   // Use the gpio to tell end of conversion
   if (_eoc != -1) {
     while (!digitalRead(_eoc)) {
-      delay(10);
     }
   } else {
     // check the status byte
     uint8_t stat;
     while ((stat = readStatus()) & MPRLS_STATUS_BUSY) {
       // Serial.print("Status: "); Serial.println(stat, HEX);
-      delay(10);
     }
   }
   _i2c->requestFrom(_i2c_addr, (uint8_t)4);
