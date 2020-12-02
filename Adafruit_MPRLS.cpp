@@ -86,8 +86,7 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
     @returns True on success, False if sensor not found
 */
 /**************************************************************************/
-bool Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire* twoWire) {
-//boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
+boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire* twoWire) {
   _i2c_addr = i2c_addr;
   _i2c = twoWire;
 
