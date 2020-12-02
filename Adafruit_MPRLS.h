@@ -24,11 +24,15 @@
 #endif
 #include "Wire.h"
 
-#define MPRLS_DEFAULT_ADDR (0x18)   ///< Most common I2C address
-#define MPRLS_STATUS_POWERED (0x40) ///< Status SPI powered bit
-#define MPRLS_STATUS_BUSY (0x20)    ///< Status busy bit
-#define MPRLS_STATUS_FAILED (0x04)  ///< Status bit for integrity fail
-#define MPRLS_STATUS_MATHSAT (0x01) ///< Status bit for math saturation
+#define MPRLS_DEFAULT_ADDR    (0x18)   ///< Most common I2C address
+#define MPRLS_READ_TIMEOUT    (20)    ///< millis
+#define MPRLS_STATUS_POWERED  (0x40) ///< Status SPI powered bit
+#define MPRLS_STATUS_BUSY     (0x20)    ///< Status busy bit
+#define MPRLS_STATUS_FAILED   (0x04)  ///< Status bit for integrity fail
+#define MPRLS_STATUS_MATHSAT  (0x01) ///< Status bit for math saturation
+#define COUNTS_224            (16777216L) //  2^24
+#define PSI_to_HPA            (68.947572932)
+#define MPRLS_STATUS_MASK     (0b01100101)  //  only these bits are set
 
 /**************************************************************************/
 /*!
@@ -39,20 +43,24 @@
 class Adafruit_MPRLS {
 public:
   Adafruit_MPRLS(int8_t reset_pin = -1, int8_t EOC_pin = -1,
-                 uint8_t PSI_min = 0, uint8_t PSI_max = 25);
+                 uint16_t PSI_min = 0, uint16_t PSI_max = 25,
+                 float OUTPUT_min = 10, float OUTPUT_max = 90, float K = PSI_to_HPA);
 
-  boolean begin(uint8_t i2c_addr = MPRLS_DEFAULT_ADDR,
-                TwoWire *twoWire = &Wire);
+  bool      begin(uint8_t i2c_addr = MPRLS_DEFAULT_ADDR,
+                  TwoWire* twoWire = &Wire);
 
-  uint8_t readStatus(void);
-  float readPressure(void);
+  uint8_t   readStatus(void);
+  float     readPressure(void);
 
+  uint8_t   lastStatus;
 private:
-  uint32_t readData(void);
+  uint32_t  readData(void);
 
-  uint8_t _i2c_addr;
-  int8_t _reset, _eoc;
-  uint8_t _PSI_min, _PSI_max;
+  uint8_t   _i2c_addr;
+  int8_t    _reset, _eoc;
+  uint16_t  _PSI_min, _PSI_max;
+  uint32_t  _OUTPUT_min, _OUTPUT_max;
+  float     _K;
 
-  TwoWire *_i2c;
+  TwoWire*  _i2c;
 };

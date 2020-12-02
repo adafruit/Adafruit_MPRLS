@@ -26,6 +26,18 @@
  *
  * MIT license, all text here must be included in any redistribution.
  *
+ * Changes by arkhipenko (https://github.com/arkhipenko) (December 2020)
+ * Overall, with all the defaults this should be 99% backwards compatible and could be a drop-in
+ * replacement. The 1% difference is that the library can now return NAN due to a timeout
+ * - added parameters to constructor to support different transfer function curves
+ *   and a factor for conversion to desired units
+ * - PSI_min and PSI_max are 16 bit unsigned to support values > 255
+ * - readPressure(void) method calculates based on the provided curve values,
+ *   and converts to desired units
+ * - readData(void) method may return NAN in case of timeout (20 millis currently - could be changed)
+ * - public variable lastStatus could be accessed to check the error bits in case of a NAN value
+ * - begin() method updates lastStatus, so in case of a failure, the reason could be checked explicitly
+ *   success is "true" if status == MPRLS_STATUS_POWERED and no other bits are set
  */
 
 #if (ARDUINO >= 100)
@@ -45,15 +57,22 @@
    skip
     @param PSI_min The minimum PSI measurement range of the sensor, default 0
     @param PSI_max The maximum PSI measurement range of the sensor, default 25
+    @param OUTPUT_min The minimum transfer function curve value in %, default 10%
+    @param OUTPUT_max The maximum transfer function curve value in %, default 90%    
+    @param K Conversion Factor to desired units, default is PSI to HPA
 */
 /**************************************************************************/
 Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
-                               uint8_t PSI_min, uint8_t PSI_max) {
+                               uint16_t PSI_min, uint16_t PSI_max,
+                               float OUTPUT_min, float OUTPUT_max, float K) {
 
   _reset = reset_pin;
   _eoc = EOC_pin;
   _PSI_min = PSI_min;
   _PSI_max = PSI_max;
+  _OUTPUT_min = (uint32_t) ((float) COUNTS_224 * (OUTPUT_min / 100.0) + 0.5);
+  _OUTPUT_max = (uint32_t) ((float) COUNTS_224 * (OUTPUT_max / 100.0) + 0.5);
+  _K = K;
 }
 
 /**************************************************************************/
@@ -65,7 +84,8 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
     @returns True on success, False if sensor not found
 */
 /**************************************************************************/
-boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
+bool Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire* twoWire) {
+//boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
   _i2c_addr = i2c_addr;
   _i2c = twoWire;
 
@@ -85,30 +105,32 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
   delay(10); // startup timing
 
   // Serial.print("Status: ");
-  uint8_t stat = readStatus();
+//  lastStatus = readStatus();
   // Serial.println(stat);
-  return !(stat & 0b10011110);
+//  return lastStatus;
+  return ( (readStatus() & MPRLS_STATUS_MASK) == MPRLS_STATUS_POWERED);
 }
 
 /**************************************************************************/
 /*!
     @brief Read and calculate the pressure
     @returns The measured pressure, in hPa on success, NAN on failure
+    @param  The conversion factor to the desired units. Default is from PSI rto hPa
 */
 /**************************************************************************/
 float Adafruit_MPRLS::readPressure(void) {
   uint32_t raw_psi = readData();
-  if (raw_psi == 0xFFFFFFFF) {
+  if ( raw_psi == 0xFFFFFFFF || _OUTPUT_min == _OUTPUT_max ) {
     return NAN;
   }
 
-  // All is good, calculate the PSI and convert to hPA
-  // use the 10-90 calibration curve
-  float psi = (raw_psi - 0x19999A) * (_PSI_max - _PSI_min);
-  psi /= (float)(0xE66666 - 0x19999A);
+  // All is good, calculate and convert to desired units using provided factor
+  // use the 10-90 calibration curve by default or whatever provided by the user
+  float psi = (raw_psi - _OUTPUT_min) * (_PSI_max - _PSI_min);
+  psi /= (float)(_OUTPUT_max - _OUTPUT_min);
   psi += _PSI_min;
-  // convert PSI to hPA
-  return psi * 68.947572932;
+  // convert to desired units
+  return psi * _K;
 }
 
 /**************************************************************************/
@@ -125,23 +147,26 @@ uint32_t Adafruit_MPRLS::readData(void) {
   _i2c->endTransmission();
 
   // Use the gpio to tell end of conversion
+  uint32_t t = millis();
   if (_eoc != -1) {
     while (!digitalRead(_eoc)) {
+      if ( millis() - t > MPRLS_READ_TIMEOUT ) return 0xFFFFFFFF; // timeout
     }
   } else {
     // check the status byte
-    uint8_t stat;
-    while ((stat = readStatus()) & MPRLS_STATUS_BUSY) {
+//    uint8_t stat;
+    while ((lastStatus = readStatus()) & MPRLS_STATUS_BUSY) {
       // Serial.print("Status: "); Serial.println(stat, HEX);
+      if ( millis() - t > MPRLS_READ_TIMEOUT ) return 0xFFFFFFFF; // timeout
     }
   }
   _i2c->requestFrom(_i2c_addr, (uint8_t)4);
 
-  uint8_t status = _i2c->read();
-  if (status & MPRLS_STATUS_MATHSAT) {
+  lastStatus = _i2c->read();
+  if (lastStatus & MPRLS_STATUS_MATHSAT) {
     return 0xFFFFFFFF;
   }
-  if (status & MPRLS_STATUS_FAILED) {
+  if (lastStatus & MPRLS_STATUS_FAILED) {
     return 0xFFFFFFFF;
   }
 
@@ -164,5 +189,6 @@ uint32_t Adafruit_MPRLS::readData(void) {
 uint8_t Adafruit_MPRLS::readStatus(void) {
   _i2c->requestFrom(_i2c_addr, (uint8_t)1);
 
-  return _i2c->read();
+  lastStatus = _i2c->read();
+  return lastStatus; 
 }
