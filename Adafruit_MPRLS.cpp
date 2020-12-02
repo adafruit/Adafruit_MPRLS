@@ -26,18 +26,20 @@
  *
  * MIT license, all text here must be included in any redistribution.
  *
+ * @section changes Changes
+ *
  * Changes by arkhipenko (https://github.com/arkhipenko) (December 2020)
  * Overall, with all the defaults this should be 99% backwards compatible and could be a drop-in
  * replacement. The 1% difference is that the library can now return NAN due to a timeout
- * - added parameters to constructor to support different transfer function curves
- *   and a factor for conversion to desired units
- * - PSI_min and PSI_max are 16 bit unsigned to support values > 255
- * - readPressure(void) method calculates based on the provided curve values,
- *   and converts to desired units
- * - readData(void) method may return NAN in case of timeout (20 millis currently - could be changed)
- * - public variable lastStatus could be accessed to check the error bits in case of a NAN value
- * - begin() method updates lastStatus, so in case of a failure, the reason could be checked explicitly
- *   success is "true" if status == MPRLS_STATUS_POWERED and no other bits are set
+ *   - added parameters to constructor to support different transfer function curves
+ *     and a factor for conversion to desired units
+ *   - PSI_min and PSI_max are 16 bit unsigned to support values > 255
+ *   - readPressure(void) method calculates based on the provided curve values,
+ *     and converts to desired units
+ *   - readData(void) method may return NAN in case of timeout (20 millis currently - could be changed)
+ *   - public variable lastStatus could be accessed to check the error bits in case of a NAN value
+ *   - begin() method updates lastStatus, so in case of a failure, the reason could be checked explicitly
+ *     success is "true" if status == MPRLS_STATUS_POWERED and no other bits are set
  */
 
 #if (ARDUINO >= 100)
