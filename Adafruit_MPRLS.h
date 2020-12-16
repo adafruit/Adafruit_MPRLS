@@ -32,7 +32,8 @@
 #define MPRLS_STATUS_MATHSAT (0x01) ///< Status bit for math saturation
 #define COUNTS_224 (16777216L)      ///< Constant: 2^24
 #define PSI_to_HPA (68.947572932)   ///< Constant: PSI to HPA conversion factor
-#define MPRLS_STATUS_MASK (0b01100101) ///< Sensor status mask: only these bits are set
+#define MPRLS_STATUS_MASK                                                      \
+  (0b01100101) ///< Sensor status mask: only these bits are set
 
 /**************************************************************************/
 /*!
