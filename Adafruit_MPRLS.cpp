@@ -112,9 +112,7 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
   delay(10); // startup timing
 
   // Serial.print("Status: ");
-  //  lastStatus = readStatus();
   // Serial.println(stat);
-  //  return lastStatus;
   return ((readStatus() & MPRLS_STATUS_MASK) == MPRLS_STATUS_POWERED);
 }
 
@@ -122,8 +120,7 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
 /*!
     @brief Read and calculate the pressure
     @returns The measured pressure, in hPa on success, NAN on failure
-    @param  The conversion factor to the desired units. Default is from PSI rto
-   hPa
+
 */
 /**************************************************************************/
 float Adafruit_MPRLS::readPressure(void) {

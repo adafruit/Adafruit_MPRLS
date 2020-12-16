@@ -30,9 +30,9 @@
 #define MPRLS_STATUS_BUSY (0x20)    ///< Status busy bit
 #define MPRLS_STATUS_FAILED (0x04)  ///< Status bit for integrity fail
 #define MPRLS_STATUS_MATHSAT (0x01) ///< Status bit for math saturation
-#define COUNTS_224 (16777216L)      //  2^24
-#define PSI_to_HPA (68.947572932)
-#define MPRLS_STATUS_MASK (0b01100101) //  only these bits are set
+#define COUNTS_224 (16777216L)      ///< Constant: 2^24
+#define PSI_to_HPA (68.947572932)   ///< Constant: PSI to HPA conversion factor
+#define MPRLS_STATUS_MASK (0b01100101) ///< Sensor status mask: only these bits are set
 
 /**************************************************************************/
 /*!
@@ -52,7 +52,7 @@ public:
   uint8_t readStatus(void);
   float readPressure(void);
 
-  uint8_t lastStatus;
+  uint8_t lastStatus; /*!< status byte after last operation */
 
 private:
   uint32_t readData(void);
