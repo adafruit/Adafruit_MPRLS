@@ -29,17 +29,21 @@
  * @section changes Changes
  *
  * Changes by arkhipenko (https://github.com/arkhipenko) (December 2020)
- * Overall, with all the defaults this should be 99% backwards compatible and could be a drop-in
- * replacement. The 1% difference is that the library can now return NAN due to a timeout
- *   - added parameters to constructor to support different transfer function curves
- *     and a factor for conversion to desired units
+ * Overall, with all the defaults this should be 99% backwards compatible and
+ * could be a drop-in replacement. The 1% difference is that the library can now
+ * return NAN due to a timeout
+ *   - added parameters to constructor to support different transfer function
+ * curves and a factor for conversion to desired units
  *   - PSI_min and PSI_max are 16 bit unsigned to support values > 255
  *   - readPressure(void) method calculates based on the provided curve values,
  *     and converts to desired units
- *   - readData(void) method may return NAN in case of timeout (20 millis currently - could be changed)
- *   - public variable lastStatus could be accessed to check the error bits in case of a NAN value
- *   - begin() method updates lastStatus, so in case of a failure, the reason could be checked explicitly
- *     success is "true" if status == MPRLS_STATUS_POWERED and no other bits are set
+ *   - readData(void) method may return NAN in case of timeout (20 millis
+ * currently - could be changed)
+ *   - public variable lastStatus could be accessed to check the error bits in
+ * case of a NAN value
+ *   - begin() method updates lastStatus, so in case of a failure, the reason
+ * could be checked explicitly success is "true" if status ==
+ * MPRLS_STATUS_POWERED and no other bits are set
  */
 
 #if (ARDUINO >= 100)
@@ -59,8 +63,10 @@
    skip
     @param PSI_min The minimum PSI measurement range of the sensor, default 0
     @param PSI_max The maximum PSI measurement range of the sensor, default 25
-    @param OUTPUT_min The minimum transfer function curve value in %, default 10%
-    @param OUTPUT_max The maximum transfer function curve value in %, default 90%    
+    @param OUTPUT_min The minimum transfer function curve value in %, default
+   10%
+    @param OUTPUT_max The maximum transfer function curve value in %, default
+   90%
     @param K Conversion Factor to desired units, default is PSI to HPA
 */
 /**************************************************************************/
@@ -72,8 +78,8 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
   _eoc = EOC_pin;
   _PSI_min = PSI_min;
   _PSI_max = PSI_max;
-  _OUTPUT_min = (uint32_t) ((float) COUNTS_224 * (OUTPUT_min / 100.0) + 0.5);
-  _OUTPUT_max = (uint32_t) ((float) COUNTS_224 * (OUTPUT_max / 100.0) + 0.5);
+  _OUTPUT_min = (uint32_t)((float)COUNTS_224 * (OUTPUT_min / 100.0) + 0.5);
+  _OUTPUT_max = (uint32_t)((float)COUNTS_224 * (OUTPUT_max / 100.0) + 0.5);
   _K = K;
 }
 
@@ -86,7 +92,7 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
     @returns True on success, False if sensor not found
 */
 /**************************************************************************/
-boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire* twoWire) {
+boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
   _i2c_addr = i2c_addr;
   _i2c = twoWire;
 
@@ -106,22 +112,23 @@ boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire* twoWire) {
   delay(10); // startup timing
 
   // Serial.print("Status: ");
-//  lastStatus = readStatus();
+  //  lastStatus = readStatus();
   // Serial.println(stat);
-//  return lastStatus;
-  return ( (readStatus() & MPRLS_STATUS_MASK) == MPRLS_STATUS_POWERED);
+  //  return lastStatus;
+  return ((readStatus() & MPRLS_STATUS_MASK) == MPRLS_STATUS_POWERED);
 }
 
 /**************************************************************************/
 /*!
     @brief Read and calculate the pressure
     @returns The measured pressure, in hPa on success, NAN on failure
-    @param  The conversion factor to the desired units. Default is from PSI rto hPa
+    @param  The conversion factor to the desired units. Default is from PSI rto
+   hPa
 */
 /**************************************************************************/
 float Adafruit_MPRLS::readPressure(void) {
   uint32_t raw_psi = readData();
-  if ( raw_psi == 0xFFFFFFFF || _OUTPUT_min == _OUTPUT_max ) {
+  if (raw_psi == 0xFFFFFFFF || _OUTPUT_min == _OUTPUT_max) {
     return NAN;
   }
 
@@ -151,14 +158,16 @@ uint32_t Adafruit_MPRLS::readData(void) {
   uint32_t t = millis();
   if (_eoc != -1) {
     while (!digitalRead(_eoc)) {
-      if ( millis() - t > MPRLS_READ_TIMEOUT ) return 0xFFFFFFFF; // timeout
+      if (millis() - t > MPRLS_READ_TIMEOUT)
+        return 0xFFFFFFFF; // timeout
     }
   } else {
     // check the status byte
-//    uint8_t stat;
+    //    uint8_t stat;
     while ((lastStatus = readStatus()) & MPRLS_STATUS_BUSY) {
       // Serial.print("Status: "); Serial.println(stat, HEX);
-      if ( millis() - t > MPRLS_READ_TIMEOUT ) return 0xFFFFFFFF; // timeout
+      if (millis() - t > MPRLS_READ_TIMEOUT)
+        return 0xFFFFFFFF; // timeout
     }
   }
   _i2c->requestFrom(_i2c_addr, (uint8_t)4);
@@ -191,5 +200,5 @@ uint8_t Adafruit_MPRLS::readStatus(void) {
   _i2c->requestFrom(_i2c_addr, (uint8_t)1);
 
   lastStatus = _i2c->read();
-  return lastStatus; 
+  return lastStatus;
 }
