@@ -60,6 +60,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_adafruit___m_p_r_l_s-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Adafruit_MPRLS Class Reference</div>  </div>
@@ -73,10 +74,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9a6bf2ebb9424055d71995b58bc668f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#a9a6bf2ebb9424055d71995b58bc668f3">Adafruit_MPRLS</a> (int8_t reset_pin=-1, int8_t EOC_pin=-1, uint8_t PSI_min=0, uint8_t PSI_max=25)</td></tr>
-<tr class="memdesc:a9a6bf2ebb9424055d71995b58bc668f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor initializes default configuration value  <a href="#a9a6bf2ebb9424055d71995b58bc668f3">More...</a><br /></td></tr>
-<tr class="separator:a9a6bf2ebb9424055d71995b58bc668f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6b5aec331fb74927a7a3e36db0dfcbe"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#ad6b5aec331fb74927a7a3e36db0dfcbe">begin</a> (uint8_t i2c_addr=<a class="el" href="_adafruit___m_p_r_l_s_8h.html#ae402a124351f097a49406529a9f805b5">MPRLS_DEFAULT_ADDR</a>, TwoWire *twoWire=&amp;Wire)</td></tr>
+<tr class="memitem:ac8cbbdd80842680d05909c41d6a1bf52"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#ac8cbbdd80842680d05909c41d6a1bf52">Adafruit_MPRLS</a> (int8_t reset_pin=-1, int8_t EOC_pin=-1, uint16_t PSI_min=0, uint16_t PSI_max=25, float OUTPUT_min=10, float OUTPUT_max=90, float K=<a class="el" href="_adafruit___m_p_r_l_s_8h.html#a3ff98535513656471ad07cdcd3cc3132">PSI_to_HPA</a>)</td></tr>
+<tr class="memdesc:ac8cbbdd80842680d05909c41d6a1bf52"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor initializes default configuration value  <a href="#ac8cbbdd80842680d05909c41d6a1bf52">More...</a><br /></td></tr>
+<tr class="separator:ac8cbbdd80842680d05909c41d6a1bf52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6b5aec331fb74927a7a3e36db0dfcbe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#ad6b5aec331fb74927a7a3e36db0dfcbe">begin</a> (uint8_t i2c_addr=<a class="el" href="_adafruit___m_p_r_l_s_8h.html#ae402a124351f097a49406529a9f805b5">MPRLS_DEFAULT_ADDR</a>, TwoWire *twoWire=&amp;Wire)</td></tr>
 <tr class="memdesc:ad6b5aec331fb74927a7a3e36db0dfcbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup and initialize communication with the hardware  <a href="#ad6b5aec331fb74927a7a3e36db0dfcbe">More...</a><br /></td></tr>
 <tr class="separator:ad6b5aec331fb74927a7a3e36db0dfcbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaaaf2f7be4a22ca019423b12ad112eba"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#aaaaf2f7be4a22ca019423b12ad112eba">readStatus</a> (void)</td></tr>
@@ -85,12 +86,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2405b7b8b0ef56fa154419bbd91015d7"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#a2405b7b8b0ef56fa154419bbd91015d7">readPressure</a> (void)</td></tr>
 <tr class="memdesc:a2405b7b8b0ef56fa154419bbd91015d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read and calculate the pressure.  <a href="#a2405b7b8b0ef56fa154419bbd91015d7">More...</a><br /></td></tr>
 <tr class="separator:a2405b7b8b0ef56fa154419bbd91015d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a6d08362ab1b48d367b1ce56047e88fc0"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r_l_s.html#a6d08362ab1b48d367b1ce56047e88fc0">lastStatus</a></td></tr>
+<tr class="separator:a6d08362ab1b48d367b1ce56047e88fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that stores state and functions for interacting with MPRLS sensor IC. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9a6bf2ebb9424055d71995b58bc668f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a6bf2ebb9424055d71995b58bc668f3">&#9670;&nbsp;</a></span>Adafruit_MPRLS()</h2>
+<a id="ac8cbbdd80842680d05909c41d6a1bf52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8cbbdd80842680d05909c41d6a1bf52">&#9670;&nbsp;</a></span>Adafruit_MPRLS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -110,14 +116,32 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramtype">uint16_t&#160;</td>
           <td class="paramname"><em>PSI_min</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>PSI_max</em> = <code>25</code>&#160;</td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>PSI_max</em> = <code>25</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>OUTPUT_min</em> = <code>10</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>OUTPUT_max</em> = <code>90</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>K</em> = <code><a class="el" href="_adafruit___m_p_r_l_s_8h.html#a3ff98535513656471ad07cdcd3cc3132">PSI_to_HPA</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -134,6 +158,9 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">EOC_pin</td><td>Optional End-of-Convert indication pin, default set to -1 to skip </td></tr>
     <tr><td class="paramname">PSI_min</td><td>The minimum PSI measurement range of the sensor, default 0 </td></tr>
     <tr><td class="paramname">PSI_max</td><td>The maximum PSI measurement range of the sensor, default 25 </td></tr>
+    <tr><td class="paramname">OUTPUT_min</td><td>The minimum transfer function curve value in %, default 10% </td></tr>
+    <tr><td class="paramname">OUTPUT_max</td><td>The maximum transfer function curve value in %, default 90% </td></tr>
+    <tr><td class="paramname">K</td><td>Conversion Factor to desired units, default is PSI to HPA </td></tr>
   </table>
   </dd>
 </dl>
@@ -218,6 +245,22 @@ Public Member Functions</h2></td></tr>
 
 <p>Read and calculate the pressure. </p>
 <dl class="section return"><dt>Returns</dt><dd>The measured pressure, in hPa on success, NAN on failure </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a6d08362ab1b48d367b1ce56047e88fc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d08362ab1b48d367b1ce56047e88fc0">&#9670;&nbsp;</a></span>lastStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t Adafruit_MPRLS::lastStatus</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>status byte after last operation </p>
 
 </div>
 </div>

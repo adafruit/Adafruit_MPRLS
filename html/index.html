@@ -74,7 +74,17 @@ Author</h1>
 <p>Written by Limor Fried/Ladyada for Adafruit Industries.</p>
 <h1><a class="anchor" id="license"></a>
 License</h1>
-<p>MIT license, all text here must be included in any redistribution. </p>
+<p>MIT license, all text here must be included in any redistribution.</p>
+<h1><a class="anchor" id="changes"></a>
+Changes</h1>
+<p>Changes by arkhipenko (<a href="https://github.com/arkhipenko">https://github.com/arkhipenko</a>) (December 2020) Overall, with all the defaults this should be 99% backwards compatible and could be a drop-in replacement. The 1% difference is that the library can now return NAN due to a timeout</p><ul>
+<li>added parameters to constructor to support different transfer function curves and a factor for conversion to desired units</li>
+<li>PSI_min and PSI_max are 16 bit unsigned to support values &gt; 255</li>
+<li>readPressure(void) method calculates based on the provided curve values, and converts to desired units</li>
+<li>readData(void) method may return NAN in case of timeout (20 millis currently - could be changed)</li>
+<li>public variable lastStatus could be accessed to check the error bits in case of a NAN value</li>
+<li>begin() method updates lastStatus, so in case of a failure, the reason could be checked explicitly success is "true" if status == MPRLS_STATUS_POWERED and no other bits are set </li>
+</ul>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
