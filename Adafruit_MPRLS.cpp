@@ -51,7 +51,6 @@
 #else
 #include "WProgram.h"
 #endif
-#include "Wire.h"
 
 #include "Adafruit_MPRLS.h"
 
@@ -93,10 +92,11 @@ Adafruit_MPRLS::Adafruit_MPRLS(int8_t reset_pin, int8_t EOC_pin,
 */
 /**************************************************************************/
 boolean Adafruit_MPRLS::begin(uint8_t i2c_addr, TwoWire *twoWire) {
-  _i2c_addr = i2c_addr;
-  _i2c = twoWire;
-
-  _i2c->begin();
+  if (i2c_dev)
+    delete i2c_dev;
+  i2c_dev = new Adafruit_I2CDevice(i2c_addr, twoWire);
+  if (!i2c_dev->begin())
+    return false;
 
   if (_reset != -1) {
     pinMode(_reset, OUTPUT);
@@ -145,11 +145,10 @@ float Adafruit_MPRLS::readPressure(void) {
 */
 /**************************************************************************/
 uint32_t Adafruit_MPRLS::readData(void) {
-  _i2c->beginTransmission(_i2c_addr);
-  _i2c->write(0xAA); // command to read pressure
-  _i2c->write((byte)0x0);
-  _i2c->write((byte)0x0);
-  _i2c->endTransmission();
+  uint8_t buffer[4] = {0xAA, 0, 0, 0};
+
+  // Request data
+  i2c_dev->write(buffer, 3);
 
   // Use the gpio to tell end of conversion
   uint32_t t = millis();
@@ -167,24 +166,21 @@ uint32_t Adafruit_MPRLS::readData(void) {
         return 0xFFFFFFFF; // timeout
     }
   }
-  _i2c->requestFrom(_i2c_addr, (uint8_t)4);
 
-  lastStatus = _i2c->read();
-  if (lastStatus & MPRLS_STATUS_MATHSAT) {
+  // Read status byte and data
+  i2c_dev->read(buffer, 4);
+
+  // check status byte
+  if (buffer[0] & MPRLS_STATUS_MATHSAT) {
     return 0xFFFFFFFF;
   }
-  if (lastStatus & MPRLS_STATUS_FAILED) {
+  if (buffer[0] & MPRLS_STATUS_FAILED) {
     return 0xFFFFFFFF;
   }
 
-  uint32_t ret;
-  ret = _i2c->read();
-  ret <<= 8;
-  ret |= _i2c->read();
-  ret <<= 8;
-  ret |= _i2c->read();
-
-  return ret;
+  // all good, return data
+  return (uint32_t(buffer[1]) << 16) | (uint32_t(buffer[2]) << 8) |
+         (uint32_t(buffer[3]));
 }
 
 /**************************************************************************/
@@ -194,8 +190,7 @@ uint32_t Adafruit_MPRLS::readData(void) {
 */
 /**************************************************************************/
 uint8_t Adafruit_MPRLS::readStatus(void) {
-  _i2c->requestFrom(_i2c_addr, (uint8_t)1);
-
-  lastStatus = _i2c->read();
-  return lastStatus;
+  uint8_t buffer[1];
+  i2c_dev->read(buffer, 1);
+  return buffer[0];
 }
