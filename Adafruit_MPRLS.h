@@ -22,7 +22,8 @@
 #else
 #include "WProgram.h"
 #endif
-#include "Wire.h"
+
+#include <Adafruit_I2CDevice.h>
 
 #define MPRLS_DEFAULT_ADDR (0x18)   ///< Most common I2C address
 #define MPRLS_READ_TIMEOUT (20)     ///< millis
@@ -56,13 +57,11 @@ public:
   uint8_t lastStatus; /*!< status byte after last operation */
 
 private:
+  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
   uint32_t readData(void);
 
-  uint8_t _i2c_addr;
   int8_t _reset, _eoc;
   uint16_t _PSI_min, _PSI_max;
   uint32_t _OUTPUT_min, _OUTPUT_max;
   float _K;
-
-  TwoWire *_i2c;
 };
